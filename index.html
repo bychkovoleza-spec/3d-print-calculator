@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101218" />
+  <meta name="description" content="Калькулятор стоимости 3D-печати: филамент, электричество, амортизация, брак и наценка." />
+  <title>FILA.CALC — калькулятор 3D-печати</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&family=Unbounded:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="noise"></div>
+
+  <main class="app-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">3D PRINT PRICE LAB</div>
+        <h1>Считай цену печати <span>без догадок.</span></h1>
+        <p>
+          Материал, электричество, износ принтера, риск брака и твоя прибыль —
+          всё в одном аккуратном расчёте.
+        </p>
+      </div>
+
+      <div class="hero-badge">
+        <div class="badge-cube">
+          <span></span><span></span><span></span>
+        </div>
+        <div>
+          <strong>FILA.CALC</strong>
+          <small>себестоимость → цена</small>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="panel form-panel">
+        <div class="panel-head">
+          <div>
+            <div class="kicker">Параметры заказа</div>
+            <h2>Что печатаем?</h2>
+          </div>
+          <button class="ghost-btn" id="resetBtn" type="button">Сбросить</button>
+        </div>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Вес модели</span>
+            <div class="input-wrap">
+              <input id="modelWeight" type="number" min="0" step="0.1" value="120">
+              <b>г</b>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Время печати</span>
+            <div class="input-wrap">
+              <input id="printHours" type="number" min="0" step="0.1" value="8">
+              <b>ч</b>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Цена катушки</span>
+            <div class="input-wrap">
+              <input id="spoolPrice" type="number" min="0" step="1" value="1800">
+              <b>₽</b>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Вес катушки</span>
+            <div class="input-wrap">
+              <input id="spoolWeight" type="number" min="1" step="1" value="1000">
+              <b>г</b>
+            </div>
+          </label>
+        </div>
+
+        <div class="section-divider">
+          <span>Принтер и электричество</span>
+        </div>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Средняя мощность</span>
+            <div class="input-wrap">
+              <input id="printerPower" type="number" min="0" step="1" value="150">
+              <b>Вт</b>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Тариф электричества</span>
+            <div class="input-wrap">
+              <input id="electricityRate" type="number" min="0" step="0.01" value="7">
+              <b>₽/кВт·ч</b>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Стоимость принтера</span>
+            <div class="input-wrap">
+              <input id="printerPrice" type="number" min="0" step="100" value="45000">
+              <b>₽</b>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Ресурс принтера</span>
+            <div class="input-wrap">
+              <input id="printerLife" type="number" min="1" step="100" value="6000">
+              <b>ч</b>
+            </div>
+          </label>
+        </div>
+
+        <div class="section-divider">
+          <span>Запас и прибыль</span>
+        </div>
+
+        <div class="range-card">
+          <div class="range-line">
+            <div>
+              <span>Расходники и риск брака</span>
+              <small>Сопла, клей, смазка, тесты, неудачные печати</small>
+            </div>
+            <output id="wasteOutput">10%</output>
+          </div>
+          <input id="wastePercent" class="range" type="range" min="0" max="50" step="1" value="10">
+        </div>
+
+        <div class="range-card">
+          <div class="range-line">
+            <div>
+              <span>Наценка / прибыль</span>
+              <small>Добавляется поверх полной себестоимости</small>
+            </div>
+            <output id="marginOutput">50%</output>
+          </div>
+          <input id="marginPercent" class="range" type="range" min="0" max="300" step="5" value="50">
+        </div>
+
+        <div class="extras">
+          <label class="field">
+            <span>Доп. работа вручную</span>
+            <div class="input-wrap">
+              <input id="manualWork" type="number" min="0" step="1" value="0">
+              <b>₽</b>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Упаковка / прочее</span>
+            <div class="input-wrap">
+              <input id="extraCosts" type="number" min="0" step="1" value="0">
+              <b>₽</b>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <aside class="panel result-panel">
+        <div class="result-top">
+          <div class="kicker">Расчёт</div>
+          <h2>Итоговая цена</h2>
+
+          <div class="price-block">
+            <span class="price" id="finalPrice">0 ₽</span>
+            <small>с учётом выбранной наценки</small>
+          </div>
+
+          <div class="cost-badge">
+            <span>Себестоимость</span>
+            <strong id="baseCost">0 ₽</strong>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <div class="breakdown-row">
+            <span><i class="dot dot-a"></i>Филамент</span>
+            <strong id="filamentCost">0 ₽</strong>
+          </div>
+
+          <div class="breakdown-row">
+            <span><i class="dot dot-b"></i>Электричество</span>
+            <strong id="electricityCost">0 ₽</strong>
+          </div>
+
+          <div class="breakdown-row">
+            <span><i class="dot dot-c"></i>Износ принтера</span>
+            <strong id="wearCost">0 ₽</strong>
+          </div>
+
+          <div class="breakdown-row">
+            <span><i class="dot dot-d"></i>Риск / расходники</span>
+            <strong id="wasteCost">0 ₽</strong>
+          </div>
+
+          <div class="breakdown-row">
+            <span><i class="dot dot-e"></i>Ручная работа</span>
+            <strong id="manualCostOut">0 ₽</strong>
+          </div>
+
+          <div class="breakdown-row">
+            <span><i class="dot dot-f"></i>Прочие расходы</span>
+            <strong id="extraCostOut">0 ₽</strong>
+          </div>
+        </div>
+
+        <div class="mini-stats">
+          <div class="mini-card">
+            <span>Материал</span>
+            <strong id="rubPerGram">0 ₽/г</strong>
+          </div>
+          <div class="mini-card">
+            <span>Печать</span>
+            <strong id="rubPerHour">0 ₽/ч</strong>
+          </div>
+          <div class="mini-card wide">
+            <span>Прибыль с заказа</span>
+            <strong id="profitValue">0 ₽</strong>
+          </div>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">Как считается</div>
+          <p>
+            Материал + электричество + амортизация + запас на расходники и брак +
+            ручная работа + прочие расходы. Затем добавляется твоя наценка.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <span>Сделано для домашней и малосерийной 3D‑печати.</span>
+      <span>Все значения можно менять под свой принтер.</span>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
